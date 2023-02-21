@@ -1,3 +1,7 @@
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
 import { StyleSheet, Text, View } from "react-native";
 //Bibliothèque Fontwesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";

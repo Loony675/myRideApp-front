@@ -14,14 +14,14 @@ export default function LoginScreen({ navigation }) {
   const [emailSU, setEmailSU] = useState();
   const [passwordSU, setPasswordSU] = useState();
   const [usernameSU, setUsernameSU] = useState();
-  const [emailSI, setEmailSI] = useState();
-  const [passwordSI, setPasswordSI] = useState();
+  const [emailSI, setEmailSI] = useState("test@gmail.com");
+  const [passwordSI, setPasswordSI] = useState("test");
 
   const dispatch = useDispatch();
 
   const handleRegister = () => {
     // fetch("http://localhost:3000/users/signUp", {
-    fetch('https://my-ride-app-vercel-be.vercel.app/users/signUp', {
+    fetch("https://my-ride-app-back.vercel.app/users/signUp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -30,10 +30,31 @@ export default function LoginScreen({ navigation }) {
         password: passwordSU,
       }),
     })
-      .then((response) => response.json())
-      .then((data) => {
+      .then(response => response.json())
+      .then(data => {
         if (data.result) {
           dispatch(login({ username: usernameSU, token: data.token }));
+          navigation.navigate("TabNavigator", { screen: "Main" });
+        }
+      });
+  };
+  const handleConnection = () => {
+    console.log("---->", emailSI, passwordSI);
+    // fetch("http://localhost:3000/users/signIn", {
+    fetch("https://my-ride-app-back.vercel.app/users/signIn", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: emailSI, password: passwordSI}),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.result) {
+        dispatch(
+            login({
+              username: data.username,
+              token: data.token,
+            })
+          );
           navigation.navigate("TabNavigator", { screen: "Main" });
         }
       });
@@ -91,6 +112,12 @@ export default function LoginScreen({ navigation }) {
             onChangeText={(value) => setPasswordSI(value)}
             value={passwordSI}
           />
+          <TouchableOpacity
+            style={styles.signUpBtn}
+            onPress={() => handleConnection()}
+          >
+            <Text>Se connecter</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
