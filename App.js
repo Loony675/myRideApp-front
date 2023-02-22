@@ -2,7 +2,7 @@ import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
 
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 //Bibliothèque Fontwesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
@@ -31,9 +31,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import users from "./reducers/users";
 
+import { useSelector } from 'react-redux';
+
 const store = configureStore({
   reducer: { users },
 });
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -73,10 +76,12 @@ const TabNavigator = () => {
 };
 
 export default function App() {
+
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
+
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
           <Stack.Screen name="Presentation" component={PresentationScreen} />
@@ -86,9 +91,10 @@ export default function App() {
           <Stack.Screen name="Commu" component={CommunauteScreen} />
           <Stack.Screen name="Entretien" component={EntretienScreen} />
           <Stack.Screen name="Itineraire" component={ItineraireScreen} />
+          <Stack.Screen name="Profil" component={ProfilScreen} />
+
           <Stack.Screen name="Meteo" component={MeteoScreen} />
           <Stack.Screen name="Parametres" component={ParametreScreen} />
-          <Stack.Screen name="Profil" component={ProfilScreen} />
           <Stack.Screen name="Roadtrip" component={RoadtripScreen} />
           <Stack.Screen name="Prime" component={PrimeScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />

@@ -7,7 +7,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 export default function PresentationScreen({ navigation }) {
   const [test, setTest] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:3000/getMoto")
+    fetch("https://my-ride-app-back.vercel.app/getMoto")
       .then((dataRetrieved) => dataRetrieved.json())
       .then((data2) => {
         if (data2.result) {

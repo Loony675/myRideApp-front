@@ -3,12 +3,13 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers/users";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen({ navigation }) {
   const [emailSU, setEmailSU] = useState();
@@ -18,6 +19,15 @@ export default function LoginScreen({ navigation }) {
   const [passwordSI, setPasswordSI] = useState("test");
 
   const dispatch = useDispatch();
+  const useSelectUsername = useSelector((state)=> state.users.value.username)
+
+  const storeData = () => {
+
+      AsyncStorage.setItem('storeUsername', useSelectUsername)
+      setUsernameSU('');
+      alert('Pseudo sauvegardé')
+  
+  }
 
   const handleRegister = () => {
     // fetch("http://localhost:3000/users/signUp", {
@@ -55,6 +65,7 @@ export default function LoginScreen({ navigation }) {
               token: data.token,
             })
           );
+          storeData()
           navigation.navigate("TabNavigator", { screen: "Main" });
         }
       });
