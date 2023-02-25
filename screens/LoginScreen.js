@@ -3,9 +3,9 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers/users";
@@ -17,17 +17,16 @@ export default function LoginScreen({ navigation }) {
   const [usernameSU, setUsernameSU] = useState();
   const [emailSI, setEmailSI] = useState("test@gmail.com");
   const [passwordSI, setPasswordSI] = useState("test");
+  const [logToken, setLogToken] = useState();
+
+  const token = useSelector((state) => state.users.value.token);
+
+  console.log('TOKEN', token);
+  useEffect(()=> {
+    setLogToken(token)
+  },[])
 
   const dispatch = useDispatch();
-  const useSelectUsername = useSelector((state)=> state.users.value.username)
-
-  const storeData = () => {
-
-      AsyncStorage.setItem('storeUsername', useSelectUsername)
-      setUsernameSU('');
-      alert('Pseudo sauvegardé')
-  
-  }
 
   const handleRegister = () => {
     // fetch("http://localhost:3000/users/signUp", {
@@ -40,36 +39,36 @@ export default function LoginScreen({ navigation }) {
         password: passwordSU,
       }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.result) {
           dispatch(login({ username: usernameSU, token: data.token }));
           navigation.navigate("TabNavigator", { screen: "Main" });
         }
       });
   };
-  const handleConnection = () => {
-    console.log("---->", emailSI, passwordSI);
+  const handleConnection =  () => {
     // fetch("http://localhost:3000/users/signIn", {
     fetch("https://my-ride-app-back.vercel.app/users/signIn", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: emailSI, password: passwordSI}),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: emailSI, password: passwordSI }),
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.result) {
-        dispatch(
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.result) {
+          dispatch(
             login({
+              loggedIn: true,
               username: data.username,
               token: data.token,
             })
           );
-          storeData()
           navigation.navigate("TabNavigator", { screen: "Main" });
         }
       });
   };
+
 
   return (
     <View style={styles.mainContainer}>

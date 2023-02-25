@@ -1,6 +1,8 @@
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-LogBox.ignoreAllLogs();//Ignore all log notifications
+import { LogBox } from "react-native";
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
+
+import { useState, useEffect } from "react";
 
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 //Bibliothèque Fontwesome
@@ -31,12 +33,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import users from "./reducers/users";
 
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const store = configureStore({
   reducer: { users },
 });
-
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -75,15 +77,47 @@ const TabNavigator = () => {
   );
 };
 
-export default function App() {
+export default function App({ navigation }) {
+  const [logState, setLogState] = useState(false);
+
+  const isAlreadyLoggedIn = async () => {
+    // try {
+    //   await AsyncStorage.getItem("storeToken").then((value) => {
+    //     if(value) {
+    //       setLogState(true)
+    //     } else {
+    //       setLogState(false)
+    //       navigation.navigate('Login')
+    //     }
+    //   });
+    // } catch (e) {
+    //   console.log(`Erreur isAlreadyLoggedIn ${e}`);
+    // }
+    try {
+      await AsyncStorage.getItem("log").then((value) => {
+        if (value == "true") {
+          setLogState(true);
+        } else {
+          setLogState(false);
+        }
+      });
+    } catch (e) {
+      console.log(`Erreur isAlreadyLoggedIn ${e}`);
+    }
+  };
+
+  useEffect(() => {
+    isAlreadyLoggedIn();
+  }, []);
 
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-
           <Stack.Screen name="Home" component={HomeScreen} />
+
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
+
           <Stack.Screen name="Presentation" component={PresentationScreen} />
           <Stack.Screen name="Main" component={MainScreen} />
           <Stack.Screen name="Actu" component={ActuScreen} />
@@ -91,7 +125,7 @@ export default function App() {
           <Stack.Screen name="Commu" component={CommunauteScreen} />
           <Stack.Screen name="Entretien" component={EntretienScreen} />
           <Stack.Screen name="Itineraire" component={ItineraireScreen} />
-          <Stack.Screen name="Profil" component={ProfilScreen} />
+          {/* <Stack.Screen name="Profil" component={ProfilScreen} /> */}
 
           <Stack.Screen name="Meteo" component={MeteoScreen} />
           <Stack.Screen name="Parametres" component={ParametreScreen} />

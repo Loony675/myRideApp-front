@@ -1,9 +1,19 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { logout } from "../reducers/users";
+
 export default function MainScreen({ navigation }) {
   const username = useSelector((state) => state.users.value.username);
 
+  const dispatch = useDispatch()
+
+  const disconnect = async() =>{
+    await AsyncStorage.removeItem('storeToken')
+    await AsyncStorage.removeItem('log')
+    dispatch(logout())
+  }
   return (
     <View style={styles.mainContainer}>
       <View>
@@ -69,6 +79,12 @@ export default function MainScreen({ navigation }) {
           <Text>Paramètres</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity
+          style={styles.menu}
+          onPress={() => disconnect()}
+        >
+          <Text>Disconnect</Text>
+        </TouchableOpacity>
     </View>
   );
 }
