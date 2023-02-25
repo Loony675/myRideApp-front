@@ -27,7 +27,7 @@ import LoginScreen from "./screens/LoginScreen";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -59,7 +59,6 @@ const TabNavigator = () => {
           } else if (route.name === "Commu") {
             iconName = "commenting";
           }
-
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
 
@@ -78,54 +77,44 @@ const TabNavigator = () => {
 };
 
 export default function App({ navigation }) {
-  const [logState, setLogState] = useState(false);
-
-  const isAlreadyLoggedIn = async () => {
-    // try {
-    //   await AsyncStorage.getItem("storeToken").then((value) => {
-    //     if(value) {
-    //       setLogState(true)
-    //     } else {
-    //       setLogState(false)
-    //       navigation.navigate('Login')
-    //     }
-    //   });
-    // } catch (e) {
-    //   console.log(`Erreur isAlreadyLoggedIn ${e}`);
-    // }
-    try {
-      await AsyncStorage.getItem("log").then((value) => {
-        if (value == "true") {
-          setLogState(true);
-        } else {
-          setLogState(false);
-        }
-      });
-    } catch (e) {
-      console.log(`Erreur isAlreadyLoggedIn ${e}`);
-    }
-  };
+  const [firstScreen, setFirstScreen] = useState("Home");
 
   useEffect(() => {
-    isAlreadyLoggedIn();
+    const checkLoggedIn = async () => {
+      const isLoggedIn = await AsyncStorage.getItem("isLoggedIn");
+      if (isLoggedIn !== null) {
+        console.log("GET==>", isLoggedIn);
+        // navigation.navigate("Main");
+        setFirstScreen("Main");
+      } else {
+        console.log("get item void");
+        // navigation.navigate("Login");
+      }
+    };
+    checkLoggedIn();
   }, []);
 
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Home" component={HomeScreen} />
-
-          <Stack.Screen name="TabNavigator" component={TabNavigator} />
+          {firstScreen == "Home" && (
+            <Stack.Screen name="Home" component={HomeScreen} />
+          )}
+          <Stack.Screen
+            name="TabNavigator"
+            component={TabNavigator}
+            screen="Accueil"
+          />
 
           <Stack.Screen name="Presentation" component={PresentationScreen} />
-          <Stack.Screen name="Main" component={MainScreen} />
+          <Stack.Screen name="Accueil" component={MainScreen} />
           <Stack.Screen name="Actu" component={ActuScreen} />
           <Stack.Screen name="Apropos" component={AproposScreen} />
           <Stack.Screen name="Commu" component={CommunauteScreen} />
           <Stack.Screen name="Entretien" component={EntretienScreen} />
           <Stack.Screen name="Itineraire" component={ItineraireScreen} />
-          {/* <Stack.Screen name="Profil" component={ProfilScreen} /> */}
+          <Stack.Screen name="Profil" component={ProfilScreen} />
 
           <Stack.Screen name="Meteo" component={MeteoScreen} />
           <Stack.Screen name="Parametres" component={ParametreScreen} />

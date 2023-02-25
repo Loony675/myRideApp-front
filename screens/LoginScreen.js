@@ -4,6 +4,8 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useState } from "react";
@@ -18,17 +20,22 @@ export default function LoginScreen({ navigation }) {
   const [emailSI, setEmailSI] = useState("test@gmail.com");
   const [passwordSI, setPasswordSI] = useState("test");
   const [logToken, setLogToken] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const token = useSelector((state) => state.users.value.token);
+  const image = {
+    uri: "https://res.cloudinary.com/dpe2tab7h/image/upload/v1672153139/P1220532-4_fdsyt1.jpg",
+  };
 
-  console.log('TOKEN', token);
-  useEffect(()=> {
-    setLogToken(token)
-  },[])
+  console.log("TOKEN", token);
+  useEffect(() => {
+    setLogToken(token);
+  }, []);
 
   const dispatch = useDispatch();
 
   const handleRegister = () => {
+    setIsLoading(true);
     // fetch("http://localhost:3000/users/signUp", {
     fetch("https://my-ride-app-back.vercel.app/users/signUp", {
       method: "POST",
@@ -43,12 +50,14 @@ export default function LoginScreen({ navigation }) {
       .then((data) => {
         if (data.result) {
           dispatch(login({ username: usernameSU, token: data.token }));
-          navigation.navigate("TabNavigator", { screen: "Main" });
+          navigation.navigate("Accueil");
         }
+        setIsLoading(false);
       });
   };
-  const handleConnection =  () => {
+  const handleConnection = async () => {
     // fetch("http://localhost:3000/users/signIn", {
+    setIsLoading(true);
     fetch("https://my-ride-app-back.vercel.app/users/signIn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -64,72 +73,80 @@ export default function LoginScreen({ navigation }) {
               token: data.token,
             })
           );
-          navigation.navigate("TabNavigator", { screen: "Main" });
         }
       });
+    try {
+      await AsyncStorage.setItem("isLoggedIn", "true");
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+    navigation.navigate("TabNavigator", {screen:'Actu'});
   };
-
 
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.signUp}>
-        <TextInput
-          style={styles.input}
-          placeholder="Pseudo"
-          autoCapitalize="none"
-          onChangeText={(value) => setUsernameSU(value)}
-          value={usernameSU}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          onChangeText={(value) => setEmailSU(value)}
-          value={emailSU}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Mot de passe"
-          autoCapitalize="none"
-          secureTextEntry={true}
-          onChangeText={(value) => setPasswordSU(value)}
-          value={passwordSU}
-        />
-        <TouchableOpacity
-          style={styles.signUpBtn}
-          onPress={() => handleRegister()}
-        >
-          <Text>M'inscrire</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.signIn}>
-        <Text>déjà un compte ?</Text>
-        <View>
+      <ImageBackground source={image} resizeMode="cover" style={styles.bgImage}>
+        <View style={styles.signUp}>
+          <TextInput
+            style={styles.input}
+            placeholder="Pseudo"
+            autoCapitalize="none"
+            onChangeText={(value) => setUsernameSU(value)}
+            value={usernameSU}
+          />
           <TextInput
             style={styles.input}
             placeholder="Email"
             autoCapitalize="none"
             keyboardType="email-address"
-            onChangeText={(value) => setEmailSI(value)}
-            value={emailSI}
+            onChangeText={(value) => setEmailSU(value)}
+            value={emailSU}
           />
           <TextInput
             style={styles.input}
             placeholder="Mot de passe"
             autoCapitalize="none"
             secureTextEntry={true}
-            onChangeText={(value) => setPasswordSI(value)}
-            value={passwordSI}
+            onChangeText={(value) => setPasswordSU(value)}
+            value={passwordSU}
           />
           <TouchableOpacity
             style={styles.signUpBtn}
-            onPress={() => handleConnection()}
+            onPress={() => handleRegister()}
           >
-            <Text>Se connecter</Text>
+            <Text>M'inscrire</Text>
           </TouchableOpacity>
         </View>
-      </View>
+        <View style={styles.signIn}>
+          <Text>déjà un compte ?</Text>
+          <View style={styles.signIn}>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              onChangeText={(value) => setEmailSI(value)}
+              value={emailSI}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Mot de passe"
+              autoCapitalize="none"
+              secureTextEntry={true}
+              onChangeText={(value) => setPasswordSI(value)}
+              value={passwordSI}
+            />
+            <TouchableOpacity
+              style={styles.signUpBtn}
+              onPress={() => handleConnection()}
+            >
+              <Text>Se connecter</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {isLoading && <ActivityIndicator size="large" color="#F7AB0A" />}
+      </ImageBackground>
     </View>
   );
 }
@@ -137,9 +154,11 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: "grey",
+  },
+  bgImage: {
     alignItems: "center",
     justifyContent: "center",
+    flex: 1,
   },
   signUp: {
     justifyContent: "center",
@@ -149,18 +168,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 40,
-    width: 90,
+    width: 100,
     backgroundColor: "rgb(90,236,93)",
     borderRadius: 99,
   },
   input: {
     justifyContent: "center",
     alignItems: "center",
-    color: "black",
-    backgroundColor: "white",
+    color: "white",
+    borderWidth: 2,
+    backgroundColor: "orange",
     width: 170,
     height: 40,
-    padding: 20,
+    padding: 2,
     margin: 10,
   },
   signIn: {
