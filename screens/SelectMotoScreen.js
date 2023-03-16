@@ -21,6 +21,7 @@ export default function SelectMotoScreen({ navigation }) {
     { key: "2", value: "Suzuki" },
     { key: "3", value: "Triumph" },
     { key: "4", value: "Kawasaki", disabled: true },
+    { key: "5", value: "Yamaha"},
   ];
 
   useEffect(() => {}, [retrievedMarques]);
