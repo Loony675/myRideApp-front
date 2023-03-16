@@ -128,7 +128,6 @@ export default function SelectMotoScreen({ navigation }) {
   ]);
 
   // post the bike to user account on server
-
   const postMyBike = () => {
     fetch("http://localhost:3000/users/postMyBike", {
       method: "POST",
@@ -165,8 +164,6 @@ export default function SelectMotoScreen({ navigation }) {
         <Text style={styles.title}>Ma moto</Text>
       </View>
       <View style={styles.container2}>
-        {/* <Text>Use Selector Token: {token}</Text>
-        <Text>Async: {asyncU}</Text> */}
         <SelectList
           setSelected={(val) => setSelectedMarque(val)}
           data={listMarques}
