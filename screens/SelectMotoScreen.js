@@ -55,6 +55,8 @@ export default function SelectMotoScreen({ navigation }) {
       });
   }, [selectedMarque]);
 
+
+
   const listMillesimes = retrievedMarques.map((data) => {
     return data.millesime;
   });

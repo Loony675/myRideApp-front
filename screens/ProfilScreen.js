@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { logout } from "../reducers/users";
@@ -14,6 +14,7 @@ export default function ProfilScreen({ navigation }) {
   console.log("Set Item", token);
 
   const [asyncU, setAsycnU] = useState();
+  const [maMoto, setMaMoto] = useState([]);
 
   // A de-commenter
   // useEffect(async () => {
@@ -30,15 +31,31 @@ export default function ProfilScreen({ navigation }) {
     dispatch(logout());
     navigation.navigate("Login");
   };
+
+
+useEffect(() => {
+
+},[maMoto])
+
+  useEffect(() => {
+    console.log("fetch putain");
+    fetch("http://localhost:3000/users/maMoto", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: token }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.maMoto[0]);
+        setMaMoto(data.maMoto[0]);
+      });
+  },[]);
   return (
     <View style={styles.mainContainer}>
       <View style={{ alignItems: "center" }}>
         <Text style={styles.title}>Profil</Text>
       </View>
-      <View style={styles.container1}>
-        {/* <Text>Use Selector Token: {token}</Text>
-        <Text>Async: {asyncU}</Text> */}
-      </View>
+      <View style={styles.container1}></View>
       <View style={styles.container2}>
         <View style={styles.user}>
           <View style={styles.avatar}></View>
@@ -50,12 +67,16 @@ export default function ProfilScreen({ navigation }) {
       </View>
       <View style={styles.container3}>
         <Text>Ma moto</Text>
+        {maMoto && (
+          <Text>
+            {maMoto.marque} {maMoto.modele} {maMoto.millesime}
+          </Text>
+        )}
 
         <TouchableOpacity
           style={styles.motoContainer}
           onPress={() => navigation.navigate("SelectMoto")}
         >
-          <Text>Moto</Text>
           <FontAwesome
             name={"arrow-right"}
             size="25"
@@ -69,7 +90,7 @@ export default function ProfilScreen({ navigation }) {
 
       <View style={styles.disconnect}>
         <TouchableOpacity style={styles.menu} onPress={() => disconnect()}>
-        <FontAwesome
+          <FontAwesome
             name={"power-off"}
             size="25"
             style={styles.arrowNavigation}
@@ -125,10 +146,11 @@ const styles = StyleSheet.create({
   arrowNavigation: {
     position: "absolute",
     right: 100,
+    color: "red",
   },
-  disconnect:{
-    width:'100%',
-   marginTop:400,
-   marginLeft:75,
-  }
+  disconnect: {
+    width: "100%",
+    marginTop: 400,
+    marginLeft: 75,
+  },
 });
