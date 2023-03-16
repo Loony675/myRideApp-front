@@ -32,8 +32,6 @@ export default function SelectMotoScreen({ navigation }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         marque: selectedMarque,
-        // cylindree: selectedCylindree,
-        // millesime: selectedMillesime,
       }),
     })
       .then((dataRetrieved) => dataRetrieved.json())
