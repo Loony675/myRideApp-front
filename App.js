@@ -3,6 +3,19 @@ LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 import { useState, useEffect } from "react";
+import AppLoading from "expo-app-loading";
+import {
+  useFonts,
+  Inter_900Black,
+  Inter_800ExtraBold,
+  Inter_700Bold,
+  Inter_600SemiBold,
+  Inter_500Medium,
+  Inter_400Regular,
+  Inter_300Light,
+  Inter_200ExtraLight,
+  Inter_100Thin,
+} from "@expo-google-fonts/inter";
 
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 //Bibliothèque Fontwesome
@@ -23,6 +36,7 @@ import ProfilScreen from "./screens/ProfilScreen";
 import RoadtripScreen from "./screens/RoadtripScreen";
 import PrimeScreen from "./screens/PrimeScreen";
 import LoginScreen from "./screens/LoginScreen";
+import SelectMotoScreen from "./screens/SelectMotoScreen";
 //Import redux
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -62,8 +76,8 @@ const TabNavigator = () => {
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
 
-        tabBarActiveTintColor: "#61BEFF",
-        tabBarInactiveTintColor: "#335561",
+        tabBarActiveTintColor: "#8DAB7F",
+        tabBarInactiveTintColor: "#394032",
         headerShown: false,
         tabBarStyle: { backgroundColor: "black" },
       })}
@@ -93,38 +107,55 @@ export default function App({ navigation }) {
     };
     checkLoggedIn();
   }, []);
+  let [fontsLoaded] = useFonts({
+    Inter_900Black,
+    Inter_800ExtraBold,
+    Inter_700Bold,
+    Inter_600SemiBold,
+    Inter_500Medium,
+    Inter_400Regular,
+    Inter_300Light,
+    Inter_200ExtraLight,
+    Inter_100Thin,
+  });
 
-  return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {firstScreen == "Home" && (
-            <Stack.Screen name="Home" component={HomeScreen} />
-          )}
-          <Stack.Screen
-            name="TabNavigator"
-            component={TabNavigator}
-            screen="Accueil"
-          />
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {
+    return (
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {firstScreen == "Home" && (
+              <Stack.Screen name="Home" component={HomeScreen} />
+            )}
+            <Stack.Screen
+              name="TabNavigator"
+              component={TabNavigator}
+              screen="Profil"
+            />
+            <Stack.Screen name="Profil" component={ProfilScreen} />
 
-          <Stack.Screen name="Presentation" component={PresentationScreen} />
-          <Stack.Screen name="Accueil" component={MainScreen} />
-          <Stack.Screen name="Actu" component={ActuScreen} />
-          <Stack.Screen name="Apropos" component={AproposScreen} />
-          <Stack.Screen name="Commu" component={CommunauteScreen} />
-          <Stack.Screen name="Entretien" component={EntretienScreen} />
-          <Stack.Screen name="Itineraire" component={ItineraireScreen} />
-          <Stack.Screen name="Profil" component={ProfilScreen} />
+            <Stack.Screen name="Presentation" component={PresentationScreen} />
+            <Stack.Screen name="Accueil" component={MainScreen} />
+            <Stack.Screen name="Actu" component={ActuScreen} />
+            <Stack.Screen name="Apropos" component={AproposScreen} />
+            <Stack.Screen name="Commu" component={CommunauteScreen} />
+            <Stack.Screen name="Entretien" component={EntretienScreen} />
+            <Stack.Screen name="Itineraire" component={ItineraireScreen} />
 
-          <Stack.Screen name="Meteo" component={MeteoScreen} />
-          <Stack.Screen name="Parametres" component={ParametreScreen} />
-          <Stack.Screen name="Roadtrip" component={RoadtripScreen} />
-          <Stack.Screen name="Prime" component={PrimeScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
-  );
+            <Stack.Screen name="Meteo" component={MeteoScreen} />
+            <Stack.Screen name="Parametres" component={ParametreScreen} />
+            <Stack.Screen name="Roadtrip" component={RoadtripScreen} />
+            <Stack.Screen name="Prime" component={PrimeScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="SelectMoto" component={SelectMotoScreen} />
+            
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

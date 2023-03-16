@@ -8,7 +8,8 @@ export default function HomeScreen({navigation}) {
       <ImageBackground
         source={require("../assets/P1220112-2.jpg")}
         resizeMode="cover"
-        style={styles.image}
+        
+        style={styles.bgImage}
       >
         <View style={styles.container1}>
           <Text
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
   globalContainer: {
     flex: 1,
   },
-  image: {
+  bgImage: {
     flex: 1,
     width: "100%",
   },

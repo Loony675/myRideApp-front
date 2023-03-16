@@ -18,7 +18,7 @@ export default function LoginScreen({ navigation }) {
   const [passwordSU, setPasswordSU] = useState();
   const [usernameSU, setUsernameSU] = useState();
   const [emailSI, setEmailSI] = useState("test@gmail.com");
-  const [passwordSI, setPasswordSI] = useState("test");
+  const [passwordSI, setPasswordSI] = useState("");
   const [logToken, setLogToken] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -73,20 +73,26 @@ export default function LoginScreen({ navigation }) {
               token: data.token,
             })
           );
+          try {
+            AsyncStorage.setItem("isLoggedIn", "true");
+          } catch (error) {
+            console.log(error);
+          }
+          navigation.navigate("TabNavigator", { screen: "Accueil" });
         }
       });
-    try {
-      await AsyncStorage.setItem("isLoggedIn", "true");
-    } catch (error) {
-      console.log(error);
-    }
+
     setIsLoading(false);
-    navigation.navigate("TabNavigator", {screen:'Actu'});
   };
 
   return (
     <View style={styles.mainContainer}>
-      <ImageBackground source={image} resizeMode="cover" style={styles.bgImage}>
+      <ImageBackground
+        source={image}
+        resizeMode="cover"
+        blurRadius={5}
+        style={styles.bgImage}
+      >
         <View style={styles.signUp}>
           <TextInput
             style={styles.input}
