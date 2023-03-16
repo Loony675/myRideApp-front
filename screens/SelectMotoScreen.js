@@ -12,7 +12,7 @@ export default function SelectMotoScreen({ navigation }) {
   const [selectedMillesime, setSelectedMillesime] = useState("");
   const [selectedCylindree, setSelectedCylindree] = useState("");
   const [selectedModele, setSelectedModele] = useState("");
-  const [listModeles, setListModeles] = useState([{}])
+  const [listModeles, setListModeles] = useState([]);
   const [retrievedMarques, setRetrievedMarques] = useState([{}]);
   const [allCheck, setAllCheck] = useState(false);
   const [retrievedModele, setRetrievedModele] = useState("");
@@ -27,7 +27,8 @@ export default function SelectMotoScreen({ navigation }) {
 
   useEffect(() => {
     // fetch("https://my-ride-app-back.vercel.app/getMoto")
-    fetch("http://localhost:3000/marques", {
+    fetch("https://my-ride-app-back.vercel.app/marques", {
+      // fetch("http://localhost:3000/marques", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -56,9 +57,21 @@ export default function SelectMotoScreen({ navigation }) {
   const listMillesimes = retrievedMarques.map((data) => {
     return data.millesime;
   });
+  const listUniqueMillesimes = listMillesimes
+    .filter((x, i) => listMillesimes.indexOf(x) === i)
+    .sort((a, b) => a - b);
+
+  const listCylindrees = retrievedMarques.map((data) => {
+    return data.cylindree;
+  });
+
+  const listUniqueCylindrees = listCylindrees
+    .filter((x, i) => listCylindrees.indexOf(x) === i)
+    .sort((a, b) => a - b);
   const listMod = listModeles.map((data) => {
     return data.modele;
   });
+  const listUniqueMod = listMod.filter((x, i) => listMod.indexOf(x) === i);
 
   useEffect(() => {
     if (
@@ -79,8 +92,11 @@ export default function SelectMotoScreen({ navigation }) {
       selectedMillesime,
       selectedCylindree
     );
+  });
+  useEffect(() => {
     if (allCheck) {
-      fetch("http://localhost:3000/findMyBike", {
+      fetch("https://my-ride-app-back.vercel.app/findMyBike", {
+        // fetch("http://localhost:3000/findMyBike", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -93,17 +109,43 @@ export default function SelectMotoScreen({ navigation }) {
         .then((data) => {
           const listModels = data.maMoto.map((data2) => {
             return {
-              modele:data2.modele
-            }
-          })
+              modele: data2.modele,
+            };
+          });
           console.log(listModels);
-          setListModeles(listModels)
+          setListModeles(listModels);
         });
+    } else {
+      console.log("Allcheck state -->", allCheck);
     }
-  },[listModeles]);
-  const listCylindrees = retrievedMarques.map((data) => {
-    return data.cylindree;
-  });
+  }, [
+    allCheck,
+    selectedMarque,
+    selectedMillesime,
+    selectedCylindree,
+    selectedModele,
+  ]);
+
+  // post the bike to user account on server
+
+  const postMyBike = () => {
+    fetch("http://localhost:3000/users/postMyBike", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token: token,
+        marque: selectedMarque,
+        millesime: selectedMillesime,
+        cylindree: selectedCylindree,
+        modele:selectedModele
+      }),
+    })
+      .then((tokenFound) => tokenFound.json())
+      .then((data) => {
+        if (data.result) {
+        }
+      });
+  }
 
   return (
     <View style={styles.mainContainer}>
@@ -133,26 +175,25 @@ export default function SelectMotoScreen({ navigation }) {
 
         <SelectList
           setSelected={(val) => setSelectedMillesime(val)}
-          data={listMillesimes}
+          data={listUniqueMillesimes}
           save="value"
           placeholder="Selectionne l'année"
         />
         <SelectList
           setSelected={(val) => setSelectedCylindree(val)}
-          data={listCylindrees}
+          data={listUniqueCylindrees}
           save="value"
           placeholder="Selectionne la cylindrée"
         />
         <SelectList
           setSelected={(val) => setSelectedModele(val)}
-          data={listMod}
+          data={listUniqueMod}
           save="value"
           placeholder="Selectionne le modèle"
         />
 
-        <Text>{selectedMarque}</Text>
-        <Text>{selectedMillesime}</Text>
-        <Text>{selectedCylindree}</Text>
+        {selectedModele && <View><Text> Ma moto {selectedModele}</Text>
+        <TouchableOpacity onPress={() =>postMyBike()}><Text>Enregister ma moto</Text></TouchableOpacity></View>}
       </View>
     </View>
   );
