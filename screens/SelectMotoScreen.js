@@ -53,9 +53,6 @@ export default function SelectMotoScreen({ navigation }) {
       });
   }, [selectedMarque]);
 
-  // console.log("Selected marque", selectedMarque);
-  // console.log("Selected millesime", selectedMillesime);
-  // console.log("Filter final", retrievedModele);
   const listMillesimes = retrievedMarques.map((data) => {
     return data.millesime;
   });
@@ -107,10 +104,6 @@ export default function SelectMotoScreen({ navigation }) {
   const listCylindrees = retrievedMarques.map((data) => {
     return data.cylindree;
   });
-
-  // const listModeles= retrievedMarques.map((data) => {
-  //   return data.modele;
-  // });
 
   return (
     <View style={styles.mainContainer}>
