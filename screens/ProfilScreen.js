@@ -8,13 +8,34 @@ import { logout } from "../reducers/users";
 export default function ProfilScreen({ navigation }) {
   // const username = useSelector((state) => state.users.value.username);
   const username = "Loony675";
-  const token = useSelector((state) => state.users.value.token);
-
-  AsyncStorage.setItem("storeToken", token);
-  console.log("Set Item", token);
+  const [tokenSave, setTokenSave] = useState('')
+  useEffect(() => {
+    const retrievedToken = async () => {
+      try {
+        const tokenSave = await AsyncStorage.getItem("token");
+        console.log("test", tokenSave);
+        setTokenSave(tokenSave)
+        setFetchDB(true)
+        fetch("http://localhost:3000/users/maMoto", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: tokenSave }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Ma moto :',data.maMoto[0]);
+            setMaMoto(data.maMoto[0]);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    retrievedToken();
+  },[maMoto]);
 
   const [asyncU, setAsycnU] = useState();
   const [maMoto, setMaMoto] = useState([]);
+  const [fetchDB, setFetchDB] =useState(false)
 
   // A de-commenter
   // useEffect(async () => {
@@ -33,23 +54,6 @@ export default function ProfilScreen({ navigation }) {
   };
 
 
-useEffect(() => {
-
-},[maMoto])
-
-  useEffect(() => {
-    console.log("fetch putain");
-    fetch("http://localhost:3000/users/maMoto", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: token }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data.maMoto[0]);
-        setMaMoto(data.maMoto[0]);
-      });
-  },[]);
   return (
     <View style={styles.mainContainer}>
       <View style={{ alignItems: "center" }}>

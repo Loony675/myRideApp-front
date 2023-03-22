@@ -18,11 +18,14 @@ export default function LoginScreen({ navigation }) {
   const [passwordSU, setPasswordSU] = useState();
   const [usernameSU, setUsernameSU] = useState();
   const [emailSI, setEmailSI] = useState("test@gmail.com");
-  const [passwordSI, setPasswordSI] = useState("");
+  const [passwordSI, setPasswordSI] = useState("test");
   const [logToken, setLogToken] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
   const token = useSelector((state) => state.users.value.token);
+  const username = useSelector((state) => state.users.value.username)
+  const [pseudo, setPseudo] = useState('')
+
   const image = {
     uri: "https://res.cloudinary.com/dpe2tab7h/image/upload/v1672153139/P1220532-4_fdsyt1.jpg",
   };
@@ -75,6 +78,11 @@ export default function LoginScreen({ navigation }) {
           );
           try {
             AsyncStorage.setItem("isLoggedIn", "true");
+          } catch (error) {
+            console.log(error);
+          }
+          try {
+            AsyncStorage.setItem("token", data.token);
           } catch (error) {
             console.log(error);
           }

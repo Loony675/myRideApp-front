@@ -6,7 +6,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { SelectList } from "react-native-dropdown-select-list";
 
 export default function SelectMotoScreen({ navigation }) {
-  const token = useSelector((state) => state.users.value.token);
+  const [tokenSave, setTokenSave] = useState('')
 
   const [selectedMarque, setSelectedMarque] = useState("");
   const [selectedMillesime, setSelectedMillesime] = useState("");
@@ -25,8 +25,22 @@ export default function SelectMotoScreen({ navigation }) {
   ];
 
   useEffect(() => {}, [retrievedMarques]);
-
   useEffect(() => {
+    const retrievedToken = async () => {
+      try {
+        const tokenSave = await AsyncStorage.getItem("token");
+        console.log("test", tokenSave);
+        setTokenSave(tokenSave)
+        setFetchDB(true)
+
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    retrievedToken();
+  },[]);
+  useEffect(() => {
+
     // fetch("https://my-ride-app-back.vercel.app/getMoto")
     fetch("https://my-ride-app-back.vercel.app/marques", {
       // fetch("http://localhost:3000/marques", {
@@ -135,7 +149,7 @@ export default function SelectMotoScreen({ navigation }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        token: token,
+        token: tokenSave,
         marque: selectedMarque,
         millesime: selectedMillesime,
         cylindree: selectedCylindree,

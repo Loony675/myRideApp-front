@@ -5,13 +5,27 @@ import {
   View,
   ImageBackground,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { logout } from "../reducers/users";
 
 export default function MainScreen({ navigation }) {
   const username = useSelector((state) => state.users.value.username);
+
+const [tokenSave, setTokenSave] = useState('')
+  useEffect(() => {
+    const test = async () => {
+      try {
+        const tokenSave = await AsyncStorage.getItem("token");
+        console.log("test", tokenSave);
+        setTokenSave(tokenSave)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    test();
+  });
 
   const dispatch = useDispatch();
 
@@ -29,7 +43,7 @@ export default function MainScreen({ navigation }) {
     <View style={styles.mainContainer}>
       {/* <ImageBackground source= {image} resizeMode='cover' blurRadius={5} style={styles.bgImage}é> */}
       <View style={styles.hello}>
-        <Text>Bonjour {username}</Text>
+        <Text>Bonjour {tokenSave}</Text>
       </View>
       <View style={styles.container}>
         <TouchableOpacity
@@ -101,11 +115,11 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     justifyContent: "center",
-    alignItems:'center',
+    alignItems: "center",
     backgroundColor: "#394032",
   },
   hello: {
-    alignItems:'center'
+    alignItems: "center",
   },
   bgImage: {
     flex: 1,
