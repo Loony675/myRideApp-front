@@ -76,7 +76,7 @@ const TabNavigator = () => {
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
 
-        tabBarActiveTintColor: "#8DAB7F",
+        tabBarActiveTintColor: "#f4ffe3",
         tabBarInactiveTintColor: "#394032",
         headerShown: false,
         tabBarStyle: { backgroundColor: "black" },
@@ -97,7 +97,6 @@ export default function App({ navigation }) {
     const checkLoggedIn = async () => {
       const isLoggedIn = await AsyncStorage.getItem("isLoggedIn");
       if (isLoggedIn !== null) {
-        console.log("GET==>", isLoggedIn);
         // navigation.navigate("Main");
         setFirstScreen("Main");
       } else {

@@ -3,31 +3,44 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ImageBackground,
+  ImageBackground
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logout } from "../reducers/users";
+import { login, logout } from "../reducers/users";
 
 export default function MainScreen({ navigation }) {
-  const username = useSelector((state) => state.users.value.username);
+  const [username, setUsername] = useState("");
 
-const [tokenSave, setTokenSave] = useState('')
+  const [tokenSave, setTokenSave] = useState("");
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    const test = async () => {
+    const getToken = async () => {
       try {
         const tokenSave = await AsyncStorage.getItem("token");
-        console.log("test", tokenSave);
-        setTokenSave(tokenSave)
+        setTokenSave(tokenSave);
+        ty;
       } catch (error) {
         console.log(error);
       }
     };
-    test();
-  });
+    getToken();
+  }, []);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    fetch("https://my-ride-app-back.vercel.app/users/findUserInfo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: tokenSave }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setUsername(data.data.username);
+        dispatch(login({ username: username }));
+      });
+  }, [tokenSave]);
 
   const disconnect = async () => {
     await AsyncStorage.removeItem("storeToken");
@@ -40,29 +53,29 @@ const [tokenSave, setTokenSave] = useState('')
     uri: "https://res.cloudinary.com/dpe2tab7h/image/upload/v1672153139/P1220532-4_fdsyt1.jpg",
   };
   return (
-    <View style={styles.mainContainer}>
+    <View style={styles.mainContainer}>        
       {/* <ImageBackground source= {image} resizeMode='cover' blurRadius={5} style={styles.bgImage}é> */}
       <View style={styles.hello}>
-        <Text>Bonjour {tokenSave}</Text>
+        <Text style={styles.helloUsername}>Bonjour {username}</Text>
       </View>
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.menu}
           onPress={() => navigation.navigate("Meteo")}
         >
-          <Text>Méteo</Text>
+          <Text style={styles.txtButton}>Méteo</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menu}
           onPress={() => navigation.navigate("Itineraire")}
         >
-          <Text>Itineraire</Text>
+          <Text style={styles.txtButton}>Itineraire</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menu}
           onPress={() => navigation.navigate("Commu")}
         >
-          <Text>Commu</Text>
+          <Text style={styles.txtButton}>Commu</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
@@ -70,19 +83,19 @@ const [tokenSave, setTokenSave] = useState('')
           style={styles.menu}
           onPress={() => navigation.navigate("Entretien")}
         >
-          <Text>Entretien</Text>
+          <Text style={styles.txtButton}>Entretien</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menu}
           onPress={() => navigation.navigate("Roadtrip")}
         >
-          <Text>Roadtrip</Text>
+          <Text style={styles.txtButton}>Roadtrip</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menu}
           onPress={() => navigation.navigate("Prime")}
         >
-          <Text>Prime</Text>
+          <Text style={styles.txtButton}>Prime</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
@@ -90,19 +103,19 @@ const [tokenSave, setTokenSave] = useState('')
           style={styles.menu}
           onPress={() => navigation.navigate("Profil")}
         >
-          <Text>Profil</Text>
+          <Text style={styles.txtButton}>Profil</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menu}
           onPress={() => navigation.navigate("Actu")}
         >
-          <Text>Actu</Text>
+          <Text style={styles.txtButton}>Actu</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menu}
           onPress={() => navigation.navigate("Parametres")}
         >
-          <Text>Paramètres</Text>
+          <Text style={styles.txtButton}>Paramètres</Text>
         </TouchableOpacity>
       </View>
 
@@ -116,10 +129,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#394032",
+    backgroundColor: "#778DA9",
   },
   hello: {
     alignItems: "center",
+  },
+  helloUsername: {
+    color: "#E0E1DD",
+    fontSize: 18,
+    fontFamily: "Inter_700Bold",
   },
   bgImage: {
     flex: 1,
@@ -134,7 +152,11 @@ const styles = StyleSheet.create({
     width: 80,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#8DAB7F",
+    backgroundColor: "#415A77",
     borderRadius: 99,
   },
+  txtButton: {
+    color: "#E0E1DD",
+  },
 });
+// palette couleur E0E1DD, 778DA9, 415A77, 1B263B, 0D1B2A

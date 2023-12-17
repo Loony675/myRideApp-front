@@ -29,8 +29,6 @@ export default function LoginScreen({ navigation }) {
   const image = {
     uri: "https://res.cloudinary.com/dpe2tab7h/image/upload/v1672153139/P1220532-4_fdsyt1.jpg",
   };
-
-  console.log("TOKEN", token);
   useEffect(() => {
     setLogToken(token);
   }, []);
@@ -53,6 +51,17 @@ export default function LoginScreen({ navigation }) {
       .then((data) => {
         if (data.result) {
           dispatch(login({ username: usernameSU, token: data.token }));
+          try {
+            AsyncStorage.setItem("isLoggedIn", "true");
+          } catch (error) {
+            console.log(error);
+          }
+          try {
+            AsyncStorage.setItem("token", data.token);
+          } catch (error) {
+            console.log(error);
+          }
+
           navigation.navigate("Accueil");
         }
         setIsLoading(false);
@@ -105,7 +114,7 @@ export default function LoginScreen({ navigation }) {
           <TextInput
             style={styles.input}
             placeholder="Pseudo"
-            autoCapitalize="none"
+            autoCapitalize="words"
             onChangeText={(value) => setUsernameSU(value)}
             value={usernameSU}
           />

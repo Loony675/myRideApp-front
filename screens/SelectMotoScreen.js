@@ -6,7 +6,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { SelectList } from "react-native-dropdown-select-list";
 
 export default function SelectMotoScreen({ navigation }) {
-  const [tokenSave, setTokenSave] = useState('')
+  const [tokenSave, setTokenSave] = useState("");
 
   const [selectedMarque, setSelectedMarque] = useState("");
   const [selectedMillesime, setSelectedMillesime] = useState("");
@@ -21,7 +21,7 @@ export default function SelectMotoScreen({ navigation }) {
     { key: "2", value: "Suzuki" },
     { key: "3", value: "Triumph" },
     { key: "4", value: "Kawasaki", disabled: true },
-    { key: "5", value: "Yamaha"},
+    { key: "5", value: "Yamaha" },
   ];
 
   useEffect(() => {}, [retrievedMarques]);
@@ -29,18 +29,15 @@ export default function SelectMotoScreen({ navigation }) {
     const retrievedToken = async () => {
       try {
         const tokenSave = await AsyncStorage.getItem("token");
-        console.log("test", tokenSave);
-        setTokenSave(tokenSave)
-        setFetchDB(true)
-
+        setTokenSave(tokenSave);
+        setFetchDB(true);
       } catch (error) {
         console.log(error);
       }
     };
     retrievedToken();
-  },[]);
+  }, []);
   useEffect(() => {
-
     // fetch("https://my-ride-app-back.vercel.app/getMoto")
     fetch("https://my-ride-app-back.vercel.app/marques", {
       // fetch("http://localhost:3000/marques", {
@@ -69,8 +66,6 @@ export default function SelectMotoScreen({ navigation }) {
       });
   }, [selectedMarque]);
 
-
-
   const listMillesimes = retrievedMarques.map((data) => {
     return data.millesime;
   });
@@ -96,11 +91,8 @@ export default function SelectMotoScreen({ navigation }) {
       selectedMillesime != "" &&
       selectedCylindree != ""
     ) {
-      console.log("AllCheck = true");
-
       setAllCheck(true);
     } else {
-      console.log("AllCheck = false");
       setAllCheck(false);
     }
     console.log(
@@ -129,11 +121,9 @@ export default function SelectMotoScreen({ navigation }) {
               modele: data2.modele,
             };
           });
-          console.log(listModels);
           setListModeles(listModels);
         });
     } else {
-      console.log("Allcheck state -->", allCheck);
     }
   }, [
     allCheck,
@@ -145,7 +135,7 @@ export default function SelectMotoScreen({ navigation }) {
 
   // post the bike to user account on server
   const postMyBike = () => {
-    fetch("http://localhost:3000/users/postMyBike", {
+    fetch("https://my-ride-app-back.vercel.app/users/postMyBike", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -153,7 +143,7 @@ export default function SelectMotoScreen({ navigation }) {
         marque: selectedMarque,
         millesime: selectedMillesime,
         cylindree: selectedCylindree,
-        modele:selectedModele
+        modele: selectedModele,
       }),
     })
       .then((tokenFound) => tokenFound.json())
@@ -161,8 +151,12 @@ export default function SelectMotoScreen({ navigation }) {
         if (data.result) {
         }
       });
-  }
+  };
 
+  useEffect(() => {
+    return () => {
+    };
+  }, []);
   return (
     <View style={styles.mainContainer}>
       <View style={{ alignItems: "center" }}>
@@ -206,8 +200,14 @@ export default function SelectMotoScreen({ navigation }) {
           placeholder="Selectionne le modèle"
         />
 
-        {selectedModele && <View><Text> Ma moto {selectedModele}</Text>
-        <TouchableOpacity onPress={() =>postMyBike()}><Text>Enregister ma moto</Text></TouchableOpacity></View>}
+        {selectedModele && (
+          <View>
+            <Text> Ma moto {selectedModele}</Text>
+            <TouchableOpacity onPress={() => postMyBike()}>
+              <Text>Enregister ma moto</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );
